@@ -1,0 +1,2 @@
+# statScraper
+gather necessary stats 
