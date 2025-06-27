@@ -166,7 +166,7 @@ LegalCopyright: © GMG. All rights reserved.
 ```
 
 Media:
-[иконки от Freepik - Flaticon](https://www.flaticon.com/ru/free-icons/ "птица иконки")
+[иконки от Freepik - Flaticon](https://www.flaticon.com/ru/free-icon/bird_276097?related_id=276097&origin=pack)
 
 
 </details>
