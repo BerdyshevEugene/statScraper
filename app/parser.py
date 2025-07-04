@@ -1,16 +1,16 @@
 import datetime
-import json
-import math
-import sys
 
-from pathlib import Path
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 
 from logger.logger import setup_logger
+from app.config import settings
+from app.rabbitmq.publish_results import publish_results
+
 
 logger = setup_logger(module_name=__name__)
+CITY = settings.city
 
 
 def value_in_cell(cell):
@@ -47,10 +47,15 @@ def parse_data(driver) -> dict:
         label = cells[0].text.strip()
         value = cells[1].text.strip()
 
-        if "В среднем клиенты ждут" in label or "В среднем разговор длится" in label:
+        phrases = [
+            "В среднем клиенты ждут",
+            "В среднем разговор длится",
+            "Клиенты, не дождавшиеся ответа, ждали в среднем:",
+        ]
+        if any(phrase in label for phrase in phrases):
             try:
                 number = float(value.split()[0].replace(",", "."))
-                data[label] = math.ceil(number)
+                data[label] = round(number)
             except (ValueError, IndexError) as e:
                 logger.warning(
                     f"failed to parse number from value '{value}' in label '{label}': {e}"
@@ -62,25 +67,19 @@ def parse_data(driver) -> dict:
     return data
 
 
-def save_result(data: dict) -> None:
+async def save_result(data: dict) -> None:
     """
-    сохраняет результат в result/result_год_месяц_день.json
+    передаем результат в json
     """
-    today_str = datetime.date.today().strftime("%Y_%m_%d")
+    yesterday = datetime.date.today() - datetime.timedelta(days=1)
+    data["Date"] = yesterday.strftime("%Y-%m-%d")
 
-    if getattr(sys, "frozen", False):
-        BASE_DIR = Path(sys.executable).parent
-    else:
-        BASE_DIR = Path(__file__).resolve().parent
-
-    result_dir = BASE_DIR / "result"
-    result_dir.mkdir(exist_ok=True)
-
-    result_path = result_dir / f"result_{today_str}.json"
+    if not CITY:
+        logger.warning("not CITY in .env")
+    data["City"] = CITY
 
     try:
-        with result_path.open("w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
-        logger.info(f"result saved successfully to {result_path}")
+        await publish_results(data)
+        logger.success(f"data was sent to rabbitmq {data}")
     except Exception as e:
-        logger.error(f"failed to save result to {result_path}: {e}")
+        logger.error(f"error when sending data to the queue: {e}")

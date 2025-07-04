@@ -15,8 +15,9 @@ statScraper/
 │
 ├── app/
 │   ├── __init__.py
-│   ├── filters/             # параметры для снятия статистики
-│   ├── result/              # хранение данных
+│   ├── filters/filters.py   # параметры для снятия статистики
+│   ├── rabbitmq/
+│   │   └── publish_results.py  # отправка данных в rabbit
 │   ├── browser.py           # инициализация WebDriver
 │   ├── client.py            # авторизация и переход к получению данных
 │   ├── config.py            # настройки (URL, логин, пароль, пути) из .env
@@ -26,12 +27,8 @@ statScraper/
 │
 ├── requirements.txt         # зависимости
 ├── .env                     # логины, пароли, URL
-├── result/                  # сохраняемые результаты
-│   └── result.json
 ├── logger/                  # конфиг логгера
 │   └── logger.log
-├── logs/                    # логи
-│   └── debug/errors.log
 ├── logs/                    # логи
 │   └── debug/errors.log
 ├── resources/               
@@ -144,6 +141,11 @@ py main.py
 ### Компиляция в скрипт:
 ```bash
 pyinstaller --onefile --icon=resources/app_icon.ico main.py
+```
+
+### Компиляция в скрипт (использовать данное решение):
+```
+pyinstaller main.py --onefile --icon=resources/app_icon.ico --copy-metadata aio-pika --copy-metadata pamqp --copy-metadata yarl
 ```
 
 </details>
