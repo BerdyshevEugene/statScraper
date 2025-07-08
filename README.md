@@ -1,16 +1,51 @@
+# statScraper
 
 [![Ruff](https://github.com/BerdyshevEugene/statScraper/actions/workflows/ruff.yml/badge.svg?cache=buster)](https://github.com/BerdyshevEugene/statScraper/actions/workflows/ruff.yml)
 
-# statScraper
+---
 
-скрипт для сбора статистики с телефонии
+## Описание
 
-## Структура проекта:
+**statScraper** — инструмент для автоматизированного сбора статистики с телефонии и отправки данных в RabbitMQ. Подходит для интеграции с корпоративными системами и автоматизации отчетности.
+
+---
+
+## Быстрый старт
+
+1. **Клонируйте репозиторий:**
+   ```bash
+   git clone https://github.com/BerdyshevEugene/statScraper.git
+   cd statScraper
+   ```
+2. **Установите Python 3.11+** и [Chromedriver](https://chromedriver.chromium.org/downloads) (если используется Selenium).
+3. **Создайте файл `.env` в корне проекта:**
+   ```env
+   URL=https://your-telephony-url
+   LOGIN=your_login
+   PASSWORD=your_password
+   # Добавьте другие переменные по необходимости
+   ```
+4. **Установите зависимости:**
+   ```bash
+   uv venv .venv
+   uv pip install -r requirements.txt
+   ```
+5. **Запустите проект:**
+   ```bash
+   py main.py
+   ```
+
+---
+
+
+---
+
+## Структура проекта
 
 <details>
+<summary>Показать структуру</summary>
 
 ```python
-
 statScraper/
 │
 ├── app/
@@ -31,131 +66,100 @@ statScraper/
 │   └── logger.log
 ├── logs/                    # логи
 │   └── debug/errors.log
-├── resources/               
-│   └── app_icon.ico         # медиа
+├── resources/               # медиа
+│   └── app_icon.ico
 └── chromedriver             # драйвер для selenium
 ```
-
 </details>
 
 ---
 
-## Установка и использование UV
+## Установка и запуск (подробно)
+
+1. **Создайте виртуальное окружение:**
+   ```bash
+   uv venv .venv  # создаёт виртуальное окружение на python 3.11
+   ```
+2. **Установите зависимости:**
+   ```bash
+   uv pip install -r requirements.txt
+   ```
+3. **Запустите программу:**
+   ```bash
+   py main.py
+   ```
+
+---
+
+## Компиляция в исполняемый файл
+
+Для сборки standalone-скрипта используйте [PyInstaller](https://pyinstaller.org/):
+
+```bash
+pyinstaller main.py --onefile --icon=resources/app_icon.ico --copy-metadata aio-pika --copy-metadata pamqp --copy-metadata yarl
+```
+
+---
+
+## Для разработчиков
+
+### Использование UV
 
 <details>
-<summary>📦 Способы установки UV</summary>
+<summary>📦 Установка и команды UV</summary>
 
-### 1. Установка через автономные установщики (рекомендуется)
+**Установка UV:**
+- macOS/Linux:
+  ```bash
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+  ```
+- Windows (PowerShell):
+  ```powershell
+  powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+  ```
+- Через PyPI:
+  ```bash
+  pip install uv
+  ```
 
-**Для macOS и Linux:**
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
-
-**Для Windows (PowerShell):**
-```powershell
-powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-```
-
-### 2. Установка через PyPI (альтернативный способ)
-```bash
-pip install uv
-```
-
-### Обновление UV
-После установки вы можете обновить UV до последней версии:
+**Обновление UV:**
 ```bash
 uv self update
 ```
 
-🔗 Подробнее об установке: [Официальная документация](https://docs.astral.sh/uv/getting-started/installation/)
-</details>
-
----
-
-<summary>🚀 Основные команды UV</summary>
-
-<details>
-
-### Управление Python-окружением
-
-**Установка конкретной версии Python:**
+**Установка Python:**
 ```bash
-uv python install 3.13  # Установит Python 3.13
+uv python install 3.13
 ```
 
-### Управление зависимостями
-
-**Синхронизация зависимостей проекта:**
+**Синхронизация зависимостей:**
 ```bash
-uv sync  # Аналог pip install + pip-compile
+uv sync
 ```
 
-**Запуск команд в окружении проекта:**
+**Запуск команд в окружении:**
 ```bash
-uv run <COMMAND>  # Например: uv run pytest
-```
-
-**Запуск Django-сервера:**
-```bash
-uv run manage.py runserver  # Альтернатива python manage.py runserver
+uv run <COMMAND>
 ```
 </details>
 
----
-
-
-<summary>🔍 Интеграция с Ruff</summary>
+### Интеграция с Ruff
 
 <details>
+<summary>🔍 Проверка кода с помощью Ruff</summary>
 
-[Ruff](https://github.com/astral-sh/ruff) - это молниеносный линтер для Python, также разработанный Astral.
+[Ruff](https://github.com/astral-sh/ruff) — быстрый линтер для Python.
 
-**Установка Ruff через UV:**
+**Установка и запуск:**
 ```bash
-uvx ruff  # Установит последнюю версию Ruff
-```
-
-**Проверка кода с помощью Ruff:**
-```bash
-uvx ruff check .  # Проверит все файлы в текущей директории
+uvx ruff
+uvx ruff check .
 ```
 </details>
 
 ---
 
-## Инструкция по запуску проекта
-
-<details>
-
-### Установка и запуск окружения:
-```bash
-uv venv .venv  # создаём виртуальное окружение на python 3.11
-uv pip install -r requirements.txt  # ставим зависимости
-```
-
-### Запуск программы:
-```bash
-py main.py
-```
-### Компиляция в скрипт:
-```bash
-pyinstaller --onefile --icon=resources/app_icon.ico main.py
-```
-
-### Компиляция в скрипт (использовать данное решение):
-```
-pyinstaller main.py --onefile --icon=resources/app_icon.ico --copy-metadata aio-pika --copy-metadata pamqp --copy-metadata yarl
-```
-
-</details>
-
----
-
-
-## Остальная информация
-
-<details>
+## Лицензия и авторы
 
 ```
 CompanyName: GMG
@@ -167,8 +171,4 @@ Development and support: Berdyshev E.A.
 LegalCopyright: © GMG. All rights reserved.
 ```
 
-Media:
-[иконки от Freepik - Flaticon](https://www.flaticon.com/ru/free-icon/bird_276097?related_id=276097&origin=pack)
-
-
-</details>
+Media: [иконки от Freepik - Flaticon](https://www.flaticon.com/ru/free-icon/bird_276097?related_id=276097&origin=pack)

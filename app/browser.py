@@ -5,17 +5,27 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 
+from app.config import settings
 from logger.logger import setup_logger
 
 logger = setup_logger(module_name=__name__)
 
 
-def get_driver(headless: bool = True):
+def str_to_bool(value: str) -> bool:
+    return value.lower() in ("1", "true", "yes", "on")
+
+
+def get_driver():
     logger.info("🔧 initializing the WebDriver")
+    headless = settings.headless
+    logger.debug(f"💡 HEADLESS mode from .env: {headless}")
     options = Options()
     if headless:
-        options.add_argument("--start-maximized")
+        options.add_argument("--headless=new")
         logger.debug("🖥️ headless mode is set (without window)")
+    else:
+        options.add_argument("--start-maximized")
+
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
 

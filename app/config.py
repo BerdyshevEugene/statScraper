@@ -1,5 +1,4 @@
 import sys
-
 from pathlib import Path
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from pydantic import HttpUrl, SecretStr
@@ -23,7 +22,10 @@ class Settings(BaseSettings):
     rabbitmq_url: str
     username: str
 
-    model_config = SettingsConfigDict(env_file=str(env_path), env_prefix="statScraper")
+    model_config = SettingsConfigDict(
+        env_file=str(env_path),
+        env_prefix="statScraper"
+    )
 
 
 settings = Settings()

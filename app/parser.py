@@ -55,7 +55,7 @@ def parse_data(driver) -> dict:
         if any(phrase in label for phrase in phrases):
             try:
                 number = float(value.split()[0].replace(",", "."))
-                data[label] = round(number)
+                data[label] = round(number, 1)
             except (ValueError, IndexError) as e:
                 logger.warning(
                     f"failed to parse number from value '{value}' in label '{label}': {e}"
